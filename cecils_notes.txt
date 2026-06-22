@@ -1,0 +1,115 @@
+The core tension problem...
+
+
+
+
+If all meta-controllers evolve in
+lockstep every generation, they tend
+to converge toward similar Bloch
+states and similar KAN concepts.
+Redundancy forms but it’s correlated
+redundancy -> they all fail together
+under the same perturbation, which
+isn’t true structural resilience...
+
+What you want is temporal separation
+controllers that have seen different
+amounts of experience at any given
+moment, so their internal states are
+genuinely diverse.
+
+
+3 ways can be achieved or integrate
+together some unknown way:
+
+
+
+(1) STAGGERED UPDATE CYCLES
+
+*Don’t evolve all MCs every generation
+ Give each MC its own cycle interval:
+
+-----------------------------------------------------
+
+# in MetaControllerProperties
+update_every: int = 1 # evolve every N generations
+
+# in BSNN.evolve()
+for mc in layer:
+    if self.generation % mc.props.update_every == 0:
+        mc.self_improve(x, target)
+
+-----------------------------------------------------
+
+Assign update_every values like 1,
+2, 3, 4 across MCs in a layer. Layer 0
+MCs run every generation. Layer 2
+MCs run every 3rd. The apex only
+updates every 5th. Now at any given
+generation, controllers are at
+genuinely different experiential ages.
+
+
+
+(2) BLOCH STATE DIVERGENCE ENFORCEMENT
+
+After each generation, measure ----
+pairwise angular distance between all
+MC Bloch states. If two controllers
+drift within a minimum separation
+threshold, push them apart:
+
+-----------------------------------------------------
+
+for i, mc_a in enumerate(all_mcs):
+    for mc_b in all_mcs[i+1:]:
+        d_theta = abs(mc_a.props.bloch_theta - mc_b.props.bloch_theta)
+        if d_theta < 0.2: # too close
+            mc_b.props.bloch_theta += 0.2 # push apart
+
+-----------------------------------------------------
+
+This is the geometric version of the
+answer / MCs that occupy different
+regions of the cognitive sphere will
+naturally develop different --------
+representational strategies over time.
+
+
+
+(3) KAN CONCEPT FINGERPRINTING
+
+Before a subconscious spawn, check
+that the new MC's Bloch state is @
+least a minimum fidelity distance
+from all existing MCs. Reject and
+reseed if too similar:
+
+-----------------------------------------------------
+
+def is_novel_enough(new_state, existing_mcs, min_distance=0.3):
+    for mc in existing_mcs:
+        existing = BlochState(mc.props.bloch_theta, mc.props.bloch_phi)
+        if new_state.fidelity_to(existing) > (1 - min_distance):
+            return False
+    return True
+
+-----------------------------------------------------
+
+Option 1 is the most impactful and
+easiest to add. Staggered cycles
+alone will produce controllers at
+meaningfully different developmental
+stages within 20-30 generations, and
+that is what creates genuine ------
+structural redundancy; not just
+copies of each other, but controllers
+that have learned from different
+slices of the network’s history.
+
+Options 2 and 3 reinforce it -------
+geometrically, ensuring separation is
+maintained even as the network
+matures and controllers naturally
+try to converge toward the best
+scoring Bloch region.
